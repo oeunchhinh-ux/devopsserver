@@ -1,39 +1,30 @@
-name: Deploy to VM
+name: Local Docker Deploy
 
 on:
   push:
-    branches: [main]
-  workflow_dispatch:
+    branches: [ main ]
 
 jobs:
-  deploy:
-    runs-on: self-hosted
-
-    # steps:
-    #   - name: Deploy
-    #     run: |
-    #       cd /Users/sovannarith/Documents/Desktop__/15_SOEUN_SOVANNARITH_PVH_Web_Homework005/my_app
-    #       git pull origin main
-    #       docker compose down
-    #       docker compose up -d --build --force-recreate
-    #       docker image prune -f
+  build-and-deploy-local:
+    # This tells GitHub to use YOUR computer, not the cloud
+    runs-on: self-hosted 
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-       
-      - name: Build Docker image
-        run: |
-          docker build -t my-nextjs-app:latest .
+      # 1. Get your code onto your computer (it's already there, but this ensures sync)
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Stop old containers
-        run: |
-          docker compose down || true
+      # 2. Build the Docker Image locally
+      - name: Build Docker Image
+        run: docker build -t my-nginx-app:latest .
 
-      - name: Start new containers
+      # 3. Stop and Remove old container
+      - name: Cleanup Old Container
         run: |
-          docker compose up -d --build --force-recreate
+          docker stop my-nginx-container || true
+          docker rm my-nginx-container || true
 
-      - name: Clean up old images
-        run: |
-          docker image prune -f
+      # 4. Run the new Nginx Container
+      # We map port 8080 on your computer to port 80 in Nginx
+      - name: Run New Container
+        run: docker run -d -p 8080:80 --name my-nginx-container my-nginx-app:latestCopied!   
