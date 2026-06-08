@@ -1,30 +1,19 @@
-name: Local Docker Deploy
+name: Deploy Next.js
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
-  build-and-deploy-local:
-    # This tells GitHub to use YOUR computer, not the cloud
-    runs-on: self-hosted 
+  deploy:
+    runs-on: ubuntu-latest
 
     steps:
-      # 1. Get your code onto your computer (it's already there, but this ensures sync)
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      # 2. Build the Docker Image locally
-      - name: Build Docker Image
-        run: docker build -t my-nginx-app:latest .
+      - name: Build Docker image
+        run: docker build -t my-nextjs-app:latest .
 
-      # 3. Stop and Remove old container
-      - name: Cleanup Old Container
-        run: |
-          docker stop my-nginx-container || true
-          docker rm my-nginx-container || true
-
-      # 4. Run the new Nginx Container
-      # We map port 8080 on your computer to port 80 in Nginx
-      - name: Run New Container
-        run: docker run -d -p 8080:80 --name my-nginx-container my-nginx-app:latestCopied!   
+      - name: Save image
+        run: docker save my-nextjs-app:latest -o image.tar
