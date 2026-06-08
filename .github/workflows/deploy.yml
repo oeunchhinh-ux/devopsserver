@@ -9,11 +9,31 @@ jobs:
   deploy:
     runs-on: self-hosted
 
+    # steps:
+    #   - name: Deploy
+    #     run: |
+    #       cd /Users/sovannarith/Documents/Desktop__/15_SOEUN_SOVANNARITH_PVH_Web_Homework005/my_app
+    #       git pull origin main
+    #       docker compose down
+    #       docker compose up -d --build --force-recreate
+    #       docker image prune -f
+
     steps:
-      - name: Deploy
+      - name: Checkout code
+        uses: actions/checkout@v3
+       
+      - name: Build Docker image
         run: |
-          cd /Users/sovannarith/Documents/Desktop__/15_SOEUN_SOVANNARITH_PVH_Web_Homework005/my_app
-          git pull origin main
-          docker compose down
+          docker build -t my-nextjs-app:latest .
+
+      - name: Stop old containers
+        run: |
+          docker compose down || true
+
+      - name: Start new containers
+        run: |
           docker compose up -d --build --force-recreate
+
+      - name: Clean up old images
+        run: |
           docker image prune -f
