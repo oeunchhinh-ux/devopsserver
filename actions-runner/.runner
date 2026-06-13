@@ -1,0 +1,11 @@
+﻿{
+  "agentId": 22,
+  "agentName": "MR_SHADOW",
+  "poolId": 1,
+  "poolName": "Default",
+  "serverUrl": "https://pipelinesghubeus25.actions.githubusercontent.com/JTxBlMAHgkCOhzmlO7NaY3TsafxQWoWVuPwCgirzNHnvvyywn2/",
+  "gitHubUrl": "https://github.com/oeunchhinh-ux/devopsserver",
+  "workFolder": "_work",
+  "useV2Flow": true,
+  "serverUrlV2": "https://broker.actions.githubusercontent.com/"
+}
