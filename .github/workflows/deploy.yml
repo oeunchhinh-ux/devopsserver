@@ -1,39 +1,15 @@
 name: Deploy Next.js to Kali
-
 on:
   push:
-    branches:
-      - main
-
+    branches: [ "main" ]
 jobs:
   deploy:
-    runs-on: self-hosted  # Uses your Kali Linux machine
-
+    runs-on: self-hosted
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
+      - uses: actions/checkout@v4
       - name: Stop Old Container
-        run: |
-          docker stop nextjs-app || true
-          docker rm nextjs-app || true
-
-      - name: Cache Docker Layers
-        uses: actions/cache@v4
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-
+        run: docker stop nextjs-app || true && docker rm nextjs-app || true
       - name: Build Docker Image
-        run: |
-          DOCKER_BUILDKIT=1 docker build \
-            -t nextjs-app \
-            --cache-from type=local,src=/tmp/.buildx-cache \
-            --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max \
-            .
-
+        run: docker build -t nextjs-app .
       - name: Run New Container
-        # Maps port 8081 on Kali -> Port 3000 in Next.js
         run: docker run -d --name nextjs-app -p 8081:3000 nextjs-app   
