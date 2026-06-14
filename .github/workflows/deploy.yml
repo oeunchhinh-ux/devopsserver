@@ -7,21 +7,33 @@ on:
 
 jobs:
   deploy:
-    # CRITICAL: This tells GitHub to use your Kali Linux machine
-    runs-on: self-hosted
+    runs-on: self-hosted  # Uses your Kali Linux machine
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Stop and Remove Old Container
+      - name: Stop Old Container
         run: |
           docker stop nextjs-app || true
           docker rm nextjs-app || true
 
+      - name: Cache Docker Layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
       - name: Build Docker Image
-        run: docker build -t nextjs-app .
+        run: |
+          DOCKER_BUILDKIT=1 docker build \
+            -t nextjs-app \
+            --cache-from type=local,src=/tmp/.buildx-cache \
+            --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max \
+            .
 
       - name: Run New Container
-        # Maps port 8081 on Kali -> Port 3000 in Next.js Docker container
-        run: docker run -d --name nextjs-app -p 8081:3000 nextjs-appCopied!   
+        # Maps port 8081 on Kali -> Port 3000 in Next.js
+        run: docker run -d --name nextjs-app -p 8081:3000 nextjs-app   
