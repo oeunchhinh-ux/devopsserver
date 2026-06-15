@@ -39,4 +39,5 @@ services:
 
 networks:
   web:
+    name: devopsserver_net
     driver: bridge
