@@ -8,8 +8,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Stop Old Container
-        run: docker stop nextjs-app || true && docker rm nextjs-app || true
+        run: docker stop my-nextjs-app || true && docker rm my-nextjs-app || true
       - name: Build Docker Image
-        run: docker build -t nextjs-app .
+        run: docker build -t my-nextjs-app:latest .
       - name: Run New Container
         run: docker run -d --name nextjs-app -p 8081:3000 nextjs-app   
