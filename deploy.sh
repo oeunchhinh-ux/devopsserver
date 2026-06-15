@@ -46,9 +46,9 @@ deploy_slot() {
   ACTIVE=$(active_slot)
 
   if [[ -z "$ACTIVE" || "$ACTIVE" == "$GREEN" ]]; then
-  TARGET="$BLUE"
+    TARGET="$BLUE"
   else
-  TARGET="$GREEN"
+    TARGET="$GREEN"
   fi
 
   docker rm -f "$TARGET" >/dev/null 2>&1 || true
@@ -62,9 +62,24 @@ deploy_slot() {
 
   echo "$TARGET"
 }
+# Wait for the app to be healthy
+wait_for_app() {
+  local name="$1"
 
+  for i in {1..20}; do
+    if docker exec "$name" curl -fsS http://localhost:$APP_PORT >/dev/null 2>&1; then
+      return 0
+    fi
+    sleep 1
+  done
+
+  echo "[deploy] app not ready"
+  exit 1
+}
+
+# Write NGINX configuration
 write_nginx() {
-  TARGET="$1"
+  local target="$1"
 
   cat > "$NGINX_CONF" <<EOF
 events {}
@@ -74,13 +89,13 @@ http {
     listen 80;
 
     location / {
-      proxy_pass http://$TARGET:$APP_PORT;
+      proxy_pass http://$target:$APP_PORT;
     }
   }
 }
 EOF
 }
-
+# Run NGINX container
 run_nginx() {
   docker rm -f "$NGINX_NAME" >/dev/null 2>&1 || true
 
@@ -97,6 +112,7 @@ ensure_nginx_config
 build
 
 TARGET=$(deploy_slot)
+wait_for_app "$TARGET"
 write_nginx "$TARGET"
 run_nginx
 
