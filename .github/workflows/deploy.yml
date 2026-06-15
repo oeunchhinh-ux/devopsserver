@@ -38,7 +38,7 @@ jobs:
       - name: Docker Ops deploy
         env:
           IMAGE_NAME: my-nextjs-app
-          DOCKER_NETWORK: devsopserver_net
+          DOCKER_NETWORK: devopsserver_net
           HOST_HTTP_PORT: 80
           HEALTH_PATH: /
           PUBLIC_URL: ${{ vars.PUBLIC_URL || secrets.PUBLIC_URL }}
