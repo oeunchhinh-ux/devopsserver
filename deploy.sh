@@ -22,37 +22,32 @@ NGINX_CONF="${SCRIPT_DIR}/nginx/nginx.conf"
 log() { echo "[deploy] $*"; }
 
 require() {
-  command -v "$1" >/dev/null 2>&1 || {
-    echo "Missing: $1"
-    exit 1
-  }
+  command -v "$1" >/dev/null 2>&1 || { echo "Missing $1"; exit 1; }
 }
 
-# ---------------------------
-# NETWORK (CRITICAL FIX)
-# ---------------------------
-ensure_network() {
-  if ! docker network inspect "$DOCKER_NETWORK" >/dev/null 2>&1; then
-    log "Creating network $DOCKER_NETWORK"
-    docker network create "$DOCKER_NETWORK" >/dev/null
-  fi
-}
+require docker
+require curl
 
 # ---------------------------
-# BUILD
+# FIX: NETWORK MUST EXIST FIRST
 # ---------------------------
-log "Building image $IMAGE_TAG"
-docker build --no-cache -t "$IMAGE_TAG" -t "${IMAGE_NAME}:latest" .
+echo "[deploy] ensuring network: $DOCKER_NETWORK"
+docker network inspect "$DOCKER_NETWORK" >/dev/null 2>&1 \
+  || docker network create "$DOCKER_NETWORK" >/dev/null
 
 # ---------------------------
-# SLOT LOGIC (FIXED)
+# BUILD IMAGE
+# ---------------------------
+log "Building $IMAGE_TAG"
+docker build -t "$IMAGE_TAG" -t "${IMAGE_NAME}:latest" .
+
+# ---------------------------
+# DETECT ACTIVE SLOT
 # ---------------------------
 ACTIVE=""
-if docker ps --format '{{.Names}}' | grep -q "$BLUE_NAME"; then
-  ACTIVE="$BLUE_NAME"
-elif docker ps --format '{{.Names}}' | grep -q "$GREEN_NAME"; then
-  ACTIVE="$GREEN_NAME"
-fi
+
+docker ps --format '{{.Names}}' | grep -q "$BLUE_NAME" && ACTIVE="$BLUE_NAME"
+docker ps --format '{{.Names}}' | grep -q "$GREEN_NAME" && [ -z "$ACTIVE" ] && ACTIVE="$GREEN_NAME"
 
 if [ "$ACTIVE" = "$BLUE_NAME" ]; then
   TARGET="$GREEN_NAME"
@@ -61,16 +56,13 @@ else
 fi
 
 log "Active: $ACTIVE"
-log "Deploying: $TARGET"
+log "Target: $TARGET"
 
 # ---------------------------
-# CLEAN OLD TARGET
+# RUN APP (FIXED NETWORK)
 # ---------------------------
 docker rm -f "$TARGET" >/dev/null 2>&1 || true
 
-# ---------------------------
-# RUN NEW APP
-# ---------------------------
 docker run -d \
   --name "$TARGET" \
   --restart unless-stopped \
@@ -81,22 +73,22 @@ docker run -d \
   "$IMAGE_TAG" >/dev/null
 
 # ---------------------------
-# HEALTH CHECK (container)
+# HEALTH CHECK
 # ---------------------------
-log "Waiting for $TARGET"
+log "Waiting for app health..."
 
 for i in {1..30}; do
   if docker exec "$TARGET" wget -qO- "http://localhost:$APP_PORT$HEALTH_PATH" >/dev/null 2>&1; then
-    log "$TARGET healthy"
+    log "$TARGET is healthy"
     break
   fi
   sleep 2
 done
 
 # ---------------------------
-# FIXED NGINX CONFIG
+# NGINX CONFIG (FIXED CLEAN)
 # ---------------------------
-log "Updating nginx config"
+log "Writing nginx config"
 
 cat > "$NGINX_CONF" <<EOF
 events {}
@@ -107,7 +99,7 @@ http {
 
     resolver 127.0.0.11 ipv6=off;
 
-    set \$upstream "$TARGET:$APP_PORT";
+    set \$upstream $TARGET:$APP_PORT;
 
     location / {
       proxy_pass http://\$upstream;
@@ -136,27 +128,24 @@ else
     nginx:alpine >/dev/null
 fi
 
-# ensure network attach
+# ensure nginx is in network (CRITICAL FIX)
 docker network connect "$DOCKER_NETWORK" "$NGINX_NAME" >/dev/null 2>&1 || true
 
 # ---------------------------
-# FINAL VALIDATION
+# VALIDATION
 # ---------------------------
-log "Validating nginx → app"
+log "Validating routing..."
 
 sleep 3
 
 docker exec "$NGINX_NAME" wget -qO- "http://$TARGET:$APP_PORT$HEALTH_PATH" >/dev/null \
-  || {
-    echo "[ERROR] nginx cannot reach $TARGET"
-    exit 1
-  }
+  || { echo "[ERROR] nginx cannot reach app"; exit 1; }
 
 # ---------------------------
 # CLEAN OLD SLOT
 # ---------------------------
 if [ -n "$ACTIVE" ] && [ "$ACTIVE" != "$TARGET" ]; then
-  log "Removing old slot $ACTIVE"
+  log "Removing old slot: $ACTIVE"
   docker rm -f "$ACTIVE" >/dev/null 2>&1 || true
 fi
 
