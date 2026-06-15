@@ -1,37 +1,38 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 APP_PORT=3000
 IMAGE_NAME="my-nextjs-app"
+IMAGE_TAG="$IMAGE_NAME:latest"
 
 BLUE="nextjs_blue"
 GREEN="nextjs_green"
 
-DOCKER_NETWORK="devopsserver_net"
+NETWORK="devops_net"
+
 NGINX_NAME="nginx"
-
-HOST_PORT=80
-NGINX_CONF="${SCRIPT_DIR}/nginx/nginx.conf"
-
-IMAGE_TAG="${IMAGE_NAME}:latest"
+NGINX_CONF="./nginx/nginx.conf"
 
 log(){ echo "[deploy] $*"; }
 
+# ----------------------------
+# Create docker network
+# ----------------------------
 ensure_network() {
-  docker network inspect "$DOCKER_NETWORK" >/dev/null 2>&1 || \
-    docker network create "$DOCKER_NETWORK"
+  docker network inspect "$NETWORK" >/dev/null 2>&1 || \
+  docker network create "$NETWORK"
 }
 
-ensure_nginx_config() {
-  mkdir -p "$(dirname "$NGINX_CONF")"
-}
-
+# ----------------------------
+# Build image
+# ----------------------------
 build() {
   docker build -t "$IMAGE_TAG" .
 }
 
+# ----------------------------
+# Find active container
+# ----------------------------
 active_slot() {
   if docker ps --format '{{.Names}}' | grep -q "$BLUE"; then
     echo "$BLUE"
@@ -42,7 +43,10 @@ active_slot() {
   fi
 }
 
-deploy_slot() {
+# ----------------------------
+# Deploy new container
+# ----------------------------
+deploy() {
   ACTIVE=$(active_slot)
 
   if [[ -z "$ACTIVE" || "$ACTIVE" == "$GREEN" ]]; then
@@ -51,33 +55,43 @@ deploy_slot() {
     TARGET="$GREEN"
   fi
 
+  log "Deploying $TARGET"
+
   docker rm -f "$TARGET" >/dev/null 2>&1 || true
 
   docker run -d \
     --name "$TARGET" \
-    --network "$DOCKER_NETWORK" \
+    --network "$NETWORK" \
     -e NODE_ENV=production \
     -e PORT=$APP_PORT \
     "$IMAGE_TAG"
 
   echo "$TARGET"
 }
-# Wait for the app to be healthy
+
+# ----------------------------
+# Wait until app is ready
+# ----------------------------
 wait_for_app() {
   local name="$1"
 
-  for i in {1..20}; do
-    if docker exec "$name" curl -fsS http://localhost:$APP_PORT >/dev/null 2>&1; then
+  log "Waiting for $name..."
+
+  for i in {1..30}; do
+    if docker exec "$name" sh -c "echo > /dev/tcp/127.0.0.1/$APP_PORT" 2>/dev/null; then
+      log "App is ready"
       return 0
     fi
     sleep 1
   done
 
-  echo "[deploy] app not ready"
+  echo "[deploy] app failed to start"
   exit 1
 }
 
-# Write NGINX configuration
+# ----------------------------
+# Generate nginx config
+# ----------------------------
 write_nginx() {
   local target="$1"
 
@@ -90,28 +104,36 @@ http {
 
     location / {
       proxy_pass http://$target:$APP_PORT;
+      proxy_http_version 1.1;
+      proxy_set_header Host \$host;
+      proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
     }
   }
 }
 EOF
 }
-# Run NGINX container
+
+# ----------------------------
+# Run nginx container
+# ----------------------------
 run_nginx() {
   docker rm -f "$NGINX_NAME" >/dev/null 2>&1 || true
 
   docker run -d \
     --name "$NGINX_NAME" \
-    --network "$DOCKER_NETWORK" \
+    --network "$NETWORK" \
     -p 80:80 \
-    -v "$NGINX_CONF:/etc/nginx/nginx.conf:ro" \
+    -v "$(pwd)/nginx/nginx.conf:/etc/nginx/nginx.conf:ro" \
     nginx:alpine
 }
 
+# ----------------------------
+# MAIN FLOW
+# ----------------------------
 ensure_network
-ensure_nginx_config
 build
 
-TARGET=$(deploy_slot)
+TARGET=$(deploy)
 wait_for_app "$TARGET"
 write_nginx "$TARGET"
 run_nginx
