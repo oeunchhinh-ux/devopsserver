@@ -1,6 +1,7 @@
 node_modules
 .next
 .git
+.github
 actions-runner
 Dockerfile
 docker-compose.yml
