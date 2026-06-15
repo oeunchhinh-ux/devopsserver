@@ -10,7 +10,7 @@ export default function Navbar({ searchBar }) {
             alt="avatar"
             className="w-15 h-15 rounded-full object-cover border-2 border-white"
           />
-          <span className="text-white font-semibold text-2xl">Group2 - CI/CD KAli testing</span>
+          <span className="text-white font-semibold text-2xl">Group2 - CI/CD KAli success</span>
         </div>
 
         {searchBar}
