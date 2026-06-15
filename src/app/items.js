@@ -64,11 +64,11 @@ export const items = [
   },
   {
     id: 8,
-    item_name: "Logitech 1080p",
+    item_name: "Mac Book M1",
     item_description:
       "Full HD webcam with auto-focus, built-in mic, and low-light support.",
     item_price: 39.99,
-    image: "https://images.unsplash.com/photo-1587614382346-4ec70e388b28",
+    image: "https://www.pinterest.com/pin/4590645838237166848/",
     saved: false,
   },
 ];
