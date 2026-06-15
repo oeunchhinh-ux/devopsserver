@@ -1,4 +1,4 @@
-name: Deploy
+name: Zero Downtime Deploy
 
 on:
   push:
@@ -10,14 +10,11 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Stop old containers
-        run: docker compose down || true
+      - name: Build new image
+        run: docker build -t my-nextjs-app:new .
 
-      - name: Build and deploy
-        run: docker compose up -d --build
-
-      - name: Verify
-        run: docker ps
+      - name: Run zero-downtime deploy
+        run: bash deploy.sh
