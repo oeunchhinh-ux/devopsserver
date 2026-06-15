@@ -1,0 +1,79 @@
+[2026-06-08 16:35:56Z INFO HostContext] No proxy settings were found based on environmental variables (http_proxy/https_proxy/HTTP_PROXY/HTTPS_PROXY)
+[2026-06-08 16:35:56Z INFO HostContext] Well known directory 'Bin': 'C:\Users\mrbob\Desktop\devsopserver\actions-runner\bin'
+[2026-06-08 16:35:56Z INFO HostContext] Well known directory 'Root': 'C:\Users\mrbob\Desktop\devsopserver\actions-runner'
+[2026-06-08 16:35:56Z INFO HostContext] Well known config file 'Credentials': 'C:\Users\mrbob\Desktop\devsopserver\actions-runner\.credentials'
+[2026-06-08 16:35:56Z INFO HostContext] Well known directory 'Bin': 'C:\Users\mrbob\Desktop\devsopserver\actions-runner\bin'
+[2026-06-08 16:35:56Z INFO HostContext] Well known directory 'Root': 'C:\Users\mrbob\Desktop\devsopserver\actions-runner'
+[2026-06-08 16:35:56Z INFO HostContext] Well known config file 'Runner': 'C:\Users\mrbob\Desktop\devsopserver\actions-runner\.runner'
+[2026-06-08 16:35:56Z INFO Listener] Runner is built for Windows (X64) - win-x64.
+[2026-06-08 16:35:56Z INFO Listener] RuntimeInformation: Microsoft Windows 10.0.26200.
+[2026-06-08 16:35:56Z INFO Listener] Version: 2.334.0
+[2026-06-08 16:35:56Z INFO Listener] Commit: f1995ede5d885c997d13d8eca5467c4ce97fe69c
+[2026-06-08 16:35:56Z INFO Listener] Culture: en-US
+[2026-06-08 16:35:56Z INFO Listener] UI Culture: en-US
+[2026-06-08 16:35:56Z INFO HostContext] Well known directory 'Bin': 'C:\Users\mrbob\Desktop\devsopserver\actions-runner\bin'
+[2026-06-08 16:35:56Z INFO HostContext] Well known directory 'Root': 'C:\Users\mrbob\Desktop\devsopserver\actions-runner'
+[2026-06-08 16:35:56Z INFO Listener] Validating directory permissions for: 'C:\Users\mrbob\Desktop\devsopserver\actions-runner'
+[2026-06-08 16:35:56Z INFO CommandLineParser] Parse
+[2026-06-08 16:35:56Z INFO CommandLineParser] Parsing 1 args
+[2026-06-08 16:35:56Z INFO CommandLineParser] parsing argument
+[2026-06-08 16:35:56Z INFO CommandLineParser] HasArgs: False
+[2026-06-08 16:35:56Z INFO CommandLineParser] Adding Command: remove
+[2026-06-08 16:35:56Z INFO Listener] Arguments parsed
+[2026-06-08 16:35:56Z INFO Runner] ExecuteCommand
+[2026-06-08 16:35:56Z INFO ConfigurationStore] currentAssemblyLocation: C:\Users\mrbob\Desktop\devsopserver\actions-runner\bin\Runner.Listener.dll
+[2026-06-08 16:35:56Z INFO HostContext] Well known directory 'Bin': 'C:\Users\mrbob\Desktop\devsopserver\actions-runner\bin'
+[2026-06-08 16:35:56Z INFO ConfigurationStore] binPath: C:\Users\mrbob\Desktop\devsopserver\actions-runner\bin
+[2026-06-08 16:35:56Z INFO HostContext] Well known directory 'Bin': 'C:\Users\mrbob\Desktop\devsopserver\actions-runner\bin'
+[2026-06-08 16:35:56Z INFO HostContext] Well known directory 'Root': 'C:\Users\mrbob\Desktop\devsopserver\actions-runner'
+[2026-06-08 16:35:56Z INFO ConfigurationStore] RootFolder: C:\Users\mrbob\Desktop\devsopserver\actions-runner
+[2026-06-08 16:35:56Z INFO HostContext] Well known directory 'Bin': 'C:\Users\mrbob\Desktop\devsopserver\actions-runner\bin'
+[2026-06-08 16:35:56Z INFO HostContext] Well known directory 'Root': 'C:\Users\mrbob\Desktop\devsopserver\actions-runner'
+[2026-06-08 16:35:56Z INFO HostContext] Well known config file 'Runner': 'C:\Users\mrbob\Desktop\devsopserver\actions-runner\.runner'
+[2026-06-08 16:35:56Z INFO ConfigurationStore] ConfigFilePath: C:\Users\mrbob\Desktop\devsopserver\actions-runner\.runner
+[2026-06-08 16:35:56Z INFO HostContext] Well known directory 'Bin': 'C:\Users\mrbob\Desktop\devsopserver\actions-runner\bin'
+[2026-06-08 16:35:56Z INFO HostContext] Well known directory 'Root': 'C:\Users\mrbob\Desktop\devsopserver\actions-runner'
+[2026-06-08 16:35:56Z INFO HostContext] Well known config file 'MigratedRunner': 'C:\Users\mrbob\Desktop\devsopserver\actions-runner\.runner_migrated'
+[2026-06-08 16:35:56Z INFO ConfigurationStore] MigratedConfigFilePath: C:\Users\mrbob\Desktop\devsopserver\actions-runner\.runner_migrated
+[2026-06-08 16:35:56Z INFO HostContext] Well known directory 'Bin': 'C:\Users\mrbob\Desktop\devsopserver\actions-runner\bin'
+[2026-06-08 16:35:56Z INFO HostContext] Well known directory 'Root': 'C:\Users\mrbob\Desktop\devsopserver\actions-runner'
+[2026-06-08 16:35:56Z INFO HostContext] Well known config file 'Credentials': 'C:\Users\mrbob\Desktop\devsopserver\actions-runner\.credentials'
+[2026-06-08 16:35:56Z INFO ConfigurationStore] CredFilePath: C:\Users\mrbob\Desktop\devsopserver\actions-runner\.credentials
+[2026-06-08 16:35:56Z INFO HostContext] Well known directory 'Bin': 'C:\Users\mrbob\Desktop\devsopserver\actions-runner\bin'
+[2026-06-08 16:35:56Z INFO HostContext] Well known directory 'Root': 'C:\Users\mrbob\Desktop\devsopserver\actions-runner'
+[2026-06-08 16:35:56Z INFO HostContext] Well known config file 'MigratedCredentials': 'C:\Users\mrbob\Desktop\devsopserver\actions-runner\.credentials_migrated'
+[2026-06-08 16:35:56Z INFO ConfigurationStore] MigratedCredFilePath: C:\Users\mrbob\Desktop\devsopserver\actions-runner\.credentials_migrated
+[2026-06-08 16:35:56Z INFO HostContext] Well known directory 'Bin': 'C:\Users\mrbob\Desktop\devsopserver\actions-runner\bin'
+[2026-06-08 16:35:56Z INFO HostContext] Well known directory 'Root': 'C:\Users\mrbob\Desktop\devsopserver\actions-runner'
+[2026-06-08 16:35:56Z INFO HostContext] Well known config file 'Service': 'C:\Users\mrbob\Desktop\devsopserver\actions-runner\.service'
+[2026-06-08 16:35:56Z INFO ConfigurationStore] ServiceConfigFilePath: C:\Users\mrbob\Desktop\devsopserver\actions-runner\.service
+[2026-06-08 16:35:56Z INFO CommandSettings] Flag 'help': 'False'
+[2026-06-08 16:35:56Z INFO CommandSettings] Flag 'version': 'False'
+[2026-06-08 16:35:56Z INFO CommandSettings] Flag 'commit': 'False'
+[2026-06-08 16:35:56Z INFO CommandSettings] Flag 'check': 'False'
+[2026-06-08 16:35:56Z INFO CommandSettings] Command 'configure': 'False'
+[2026-06-08 16:35:56Z INFO CommandSettings] Command 'remove': 'True'
+[2026-06-08 16:35:56Z INFO CommandSettings] Flag 'local': 'False'
+[2026-06-08 16:35:56Z INFO ConfigurationStore] IsServiceConfigured()
+[2026-06-08 16:35:56Z INFO ConfigurationStore] IsServiceConfigured: False
+[2026-06-08 16:35:56Z INFO ConfigurationStore] IsConfigured()
+[2026-06-08 16:35:56Z INFO ConfigurationStore] IsConfigured: True
+[2026-06-08 16:35:56Z INFO ConfigurationStore] HasCredentials()
+[2026-06-08 16:35:56Z INFO ConfigurationStore] stored True
+[2026-06-08 16:35:56Z INFO ConfigurationStore] Read setting file: 399 chars
+[2026-06-08 16:35:56Z INFO CommandSettings] Arg 'token': ''
+[2026-06-08 16:35:56Z INFO CommandSettings] Flag 'unattended': 'False'
+[2026-06-08 16:35:56Z INFO PromptManager] ReadValue
+[2026-06-08 16:35:56Z INFO Terminal] WRITE: Enter runner remove token: 
+[2026-06-08 16:35:56Z INFO Terminal] READ SECRET
+[2026-06-08 16:37:17Z INFO Terminal] Read value: '***'
+[2026-06-08 16:37:17Z ERR  Terminal] WRITE ERROR: Http response code: NotFound from 'POST https://api.github.com/actions/runner-registration' (Request Id: 5C34:22D92A:6FC01E:7A0AD1:6A26EFBD)
+[2026-06-08 16:37:17Z ERR  Terminal] WRITE ERROR: {"message":"Not Found","documentation_url":"https://docs.github.com/rest","status":"404"}
+[2026-06-08 16:37:17Z ERR  Terminal] WRITE ERROR: Failed: Removing runner from the server
+[2026-06-08 16:37:17Z ERR  Runner] System.Net.Http.HttpRequestException: Response status code does not indicate success: 404 (Not Found).
+   at System.Net.Http.HttpResponseMessage.EnsureSuccessStatusCode()
+   at GitHub.Runner.Listener.Configuration.ConfigurationManager.GetTenantCredential(String githubUrl, String githubToken, String runnerEvent)
+   at GitHub.Runner.Listener.Configuration.ConfigurationManager.UnconfigureAsync(CommandSettings command)
+   at GitHub.Runner.Listener.Runner.ExecuteCommand(CommandSettings command)
+[2026-06-08 16:37:17Z ERR  Terminal] WRITE ERROR: Response status code does not indicate success: 404 (Not Found).
+[2026-06-08 16:37:17Z INFO Listener] Runner execution has finished with return code 1

@@ -1,0 +1,12 @@
+﻿{
+  "repositoryName": "oeunchhinh-ux/devopsserver",
+  "pipelineDirectory": "devopsserver",
+  "workspaceDirectory": "devopsserver\\devopsserver",
+  "repositories": {
+    "oeunchhinh-ux/devopsserver": {
+      "repositoryPath": "devopsserver\\devopsserver",
+      "lastRunOn": "06/09/2026 01:26:49 +07:00"
+    }
+  },
+  "lastRunOn": "06/09/2026 01:26:49 +07:00"
+}
