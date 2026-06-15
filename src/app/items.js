@@ -68,7 +68,7 @@ export const items = [
     item_description:
       "Full HD webcam with auto-focus, built-in mic, and low-light support.",
     item_price: 39.99,
-    image: "https://www.pinterest.com/pin/4590645838237166848/",
+    image: "https://i.pinimg.com/1200x/30/ad/04/30ad0478e14c689ac56871eea4d2ee68.jpg",
     saved: false,
   },
 ];
