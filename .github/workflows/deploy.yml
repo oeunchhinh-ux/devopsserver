@@ -27,6 +27,15 @@ jobs:
         with:
           clean: true
 
+      - name: Clean workspace
+        run: |
+          rm -rf actions-runner/_work/devopsserver/devopsserver || true
+          git config --global --unset core.sshCommand || true
+
+      - name: Clean workspace
+        run: |
+          docker network create devopsserver_net 2>/dev/null || true
+
       - name: Prepare deploy script
         run: chmod +x deploy.sh
 

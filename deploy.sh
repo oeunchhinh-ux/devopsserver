@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 APP_PORT=3000
 IMAGE_NAME="my-nextjs-app"
 
@@ -31,17 +33,22 @@ build() {
 }
 
 active_slot() {
-  docker ps --format '{{.Names}}' | grep -q "$BLUE" && echo "$BLUE"
-  docker ps --format '{{.Names}}' | grep -q "$GREEN" && echo "$GREEN"
+  if docker ps --format '{{.Names}}' | grep -q "$BLUE"; then
+    echo "$BLUE"
+  elif docker ps --format '{{.Names}}' | grep -q "$GREEN"; then
+    echo "$GREEN"
+  else
+    echo ""
+  fi
 }
 
 deploy_slot() {
   ACTIVE=$(active_slot)
 
-  if [ "$ACTIVE" = "$BLUE" ]; then
-    TARGET="$GREEN"
+  if [[ -z "$ACTIVE" || "$ACTIVE" == "$GREEN" ]]; then
+  TARGET="$BLUE"
   else
-    TARGET="$BLUE"
+  TARGET="$GREEN"
   fi
 
   docker rm -f "$TARGET" >/dev/null 2>&1 || true
