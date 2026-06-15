@@ -1,9 +1,8 @@
-.git
-.github
 node_modules
 .next
-npm-debug.log
+.git
+actions-runner
 Dockerfile
 docker-compose.yml
-README.md
-actions-runner
+npm-debug.log
+.DS_Store

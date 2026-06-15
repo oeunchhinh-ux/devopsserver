@@ -1,15 +1,23 @@
-name: Deploy Next.js to Kali
+name: Deploy
+
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
+
 jobs:
   deploy:
     runs-on: self-hosted
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Stop Old Container
-        run: docker stop my-nextjs-app || true && docker rm my-nextjs-app || true
-      - name: Build Docker Image
-        run: docker build -t my-nextjs-app:latest .
-      - name: Run New Container
-        run: docker run -d --name nextjs-app -p 8081:3000 nextjs-app   
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Stop old containers
+        run: docker compose down || true
+
+      - name: Build and deploy
+        run: docker compose up -d --build
+
+      - name: Verify
+        run: docker ps
