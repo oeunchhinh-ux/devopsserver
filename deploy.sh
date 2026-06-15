@@ -17,15 +17,16 @@ echo "=============================="
 if docker ps --format '{{.Names}}' | grep -q "$BLUE_NAME"; then
     TARGET_PORT=$GREEN_PORT
     TARGET_NAME=$GREEN_NAME
-    ACTIVE_PORT=$BLUE_PORT
 else
     TARGET_PORT=$BLUE_PORT
     TARGET_NAME=$BLUE_NAME
-    ACTIVE_PORT=$GREEN_PORT
 fi
 
 echo "📦 Building image..."
 docker build -t $APP:latest .
+
+echo "🧹 Cleaning old container (if exists)..."
+docker rm -f $TARGET_NAME || true
 
 echo "🚀 Starting new version on port $TARGET_PORT..."
 
@@ -43,7 +44,9 @@ echo "🔎 Status: $STATUS"
 
 if [ "$STATUS" != "200" ]; then
     echo "❌ Failed → rollback"
-    docker rm -f $TARGET_NAME
+
+    docker rm -f $TARGET_NAME || true
+
     exit 1
 fi
 
