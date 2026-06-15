@@ -45,6 +45,10 @@ container_running() {
   docker ps --format '{{.Names}}' | grep -Fxq "$1"
 }
 
+container_on_network() {
+  docker inspect -f '{{json .NetworkSettings.Networks}}' "$1" 2>/dev/null | grep -Fq "\"${DOCKER_NETWORK}\""
+}
+
 wait_for_http() {
   local url="$1"
   local label="$2"
@@ -85,6 +89,30 @@ wait_for_container() {
   done
 
   log "$label did not become healthy inside the container"
+  return 1
+}
+
+wait_for_nginx_upstream() {
+  local upstream_name="$1"
+  local label="nginx to ${upstream_name}"
+  local attempts="${2:-20}"
+  local delay="${3:-2}"
+  local path="$HEALTH_PATH"
+
+  for _ in $(seq 1 "$attempts"); do
+    if docker exec "$NGINX_NAME" sh -c "wget -q -O /dev/null 'http://${upstream_name}:${APP_PORT}${path}'" >/dev/null 2>&1; then
+      log "$label is reachable inside Docker"
+      return 0
+    fi
+
+    sleep "$delay"
+  done
+
+  log "$label is not reachable inside Docker"
+  log "Containers on ${DOCKER_NETWORK}:"
+  docker network inspect "$DOCKER_NETWORK" --format '{{range .Containers}}{{println .Name}}{{end}}' 2>/dev/null || true
+  log "Recent nginx logs:"
+  docker logs "$NGINX_NAME" --tail 40 2>&1 || true
   return 1
 }
 
@@ -163,16 +191,21 @@ start_or_reload_nginx() {
     else
       docker network connect "$DOCKER_NETWORK" "$NGINX_NAME" >/dev/null 2>&1 || true
 
-      if container_running "$NGINX_NAME"; then
-        if docker exec "$NGINX_NAME" nginx -s reload >/dev/null 2>&1; then
-          log "Reloaded nginx"
-          return 0
+      if ! container_on_network "$NGINX_NAME"; then
+        log "Recreating nginx so it joins ${DOCKER_NETWORK}"
+        docker rm -f "$NGINX_NAME" >/dev/null 2>&1 || true
+      else
+        if container_running "$NGINX_NAME"; then
+          if docker exec "$NGINX_NAME" nginx -s reload >/dev/null 2>&1; then
+            log "Reloaded nginx"
+            return 0
+          fi
         fi
-      fi
 
-      docker restart "$NGINX_NAME" >/dev/null
-      log "Restarted nginx"
-      return 0
+        docker restart "$NGINX_NAME" >/dev/null
+        log "Restarted nginx"
+        return 0
+      fi
     fi
   fi
 
@@ -184,6 +217,11 @@ start_or_reload_nginx() {
     -p "${HOST_HTTP_PORT}:80" \
     -v "${NGINX_CONF}:/etc/nginx/nginx.conf:ro" \
     nginx:alpine >/dev/null
+
+  if ! container_on_network "$NGINX_NAME"; then
+    log "nginx did not join ${DOCKER_NETWORK}"
+    return 1
+  fi
 }
 
 route_nginx_to() {
@@ -194,6 +232,7 @@ route_nginx_to() {
     -v "${NGINX_CONF}:/etc/nginx/nginx.conf:ro" \
     nginx:alpine nginx -t >/dev/null
   start_or_reload_nginx
+  wait_for_nginx_upstream "$upstream_name"
 }
 
 cleanup_legacy_app_containers() {
@@ -218,8 +257,10 @@ rollback() {
     wait_for_http "http://127.0.0.1:${HOST_HTTP_PORT}${HEALTH_PATH}" "rollback nginx" 10 2 || true
   fi
 
-  if [ -n "${TARGET_NAME:-}" ]; then
+  if [ -n "${TARGET_NAME:-}" ] && [ -n "${ACTIVE_NAME:-}" ]; then
     docker rm -f "$TARGET_NAME" >/dev/null 2>&1 || true
+  elif [ -n "${TARGET_NAME:-}" ]; then
+    log "No previous active slot exists; keeping $TARGET_NAME running for inspection"
   fi
 
   exit 1
