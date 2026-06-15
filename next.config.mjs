@@ -1,6 +1,10 @@
+// next.config.mjs  ← ESM syntax
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "standalone"
+  output: "standalone",
+  images: {
+    unoptimized: true,
+  },
 };
 
-module.exports = nextConfig;
+export default nextConfig;   // ← NOT module.exports
