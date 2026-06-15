@@ -1,25 +1,16 @@
 services:
-  nextjs:
-    image: my-nextjs-app:latest
-    container_name: nextjs
-    restart: always
-    ports:
-      - "3000:3000"
-
-  nextjs_new:
-    image: my-nextjs-app:new
-    container_name: nextjs_new
-    restart: always
-    ports:
-      - "3001:3000"
-
   nginx:
     image: nginx:alpine
     container_name: nginx
-    restart: always
+    restart: unless-stopped
     ports:
-      - "80:80"
-      - "443:443"
+      - "${HOST_HTTP_PORT:-80}:80"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/certs:/etc/letsencrypt
+    networks:
+      - web
+
+networks:
+  web:
+    name: ${DOCKER_NETWORK:-devsopserver_net}
+    external: true

@@ -1,20 +1,51 @@
-name: Zero Downtime Deploy
+name: Dev to Docker Ops Deploy
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
+
+concurrency:
+  group: kali-docker-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
 
 jobs:
   deploy:
+    name: CI/CD on self-hosted Kali runner
     runs-on: self-hosted
+    timeout-minutes: 30
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build new image
-        run: docker build -t my-nextjs-app:new .
+      - name: Prepare deploy script
+        run: chmod +x deploy.sh
 
-      - name: Run zero-downtime deploy
+      - name: Dev CI build check
+        env:
+          IMAGE_NAME: my-nextjs-app
+        run: docker build --target builder -t "$IMAGE_NAME:ci-${GITHUB_SHA}" .
+
+      - name: Docker Ops deploy
+        env:
+          IMAGE_NAME: my-nextjs-app
+          DOCKER_NETWORK: devsopserver_net
+          HOST_HTTP_PORT: 80
+          HEALTH_PATH: /
+          PUBLIC_URL: ${{ vars.PUBLIC_URL || secrets.PUBLIC_URL }}
         run: bash deploy.sh
+
+      - name: Cleanup CI image
+        if: always()
+        env:
+          IMAGE_NAME: my-nextjs-app
+        run: docker image rm "$IMAGE_NAME:ci-${GITHUB_SHA}" >/dev/null 2>&1 || true
+
+      - name: Show Docker deployment status
+        if: always()
+        run: docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}"
