@@ -47,13 +47,7 @@ if [ "$STATUS" != "200" ]; then
     exit 1
 fi
 
-echo "✅ New version healthy"
-
-echo "🔁 Switching nginx upstream..."
-
-# rewrite nginx config dynamically
-sudo sed -i "s/127.0.0.1:$ACTIVE_PORT/127.0.0.1:$TARGET_PORT/" ~/devopsserver/nginx/nginx.conf
-
+echo "🔁 Restarting nginx container..."
 docker restart nginx
 
 echo "🎉 DEPLOY SUCCESS"
