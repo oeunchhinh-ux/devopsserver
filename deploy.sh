@@ -11,7 +11,7 @@ DOCKER_NETWORK="devopsserver_net"
 NGINX_NAME="nginx"
 
 HOST_PORT=80
-NGINX_CONF="/opt/devopsserver/nginx/nginx.conf"
+NGINX_CONF="${SCRIPT_DIR}/nginx/nginx.conf"
 
 IMAGE_TAG="${IMAGE_NAME}:latest"
 
