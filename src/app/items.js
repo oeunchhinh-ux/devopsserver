@@ -1,7 +1,7 @@
 export const items = [
   {
     id: 1,
-    item_name: "IPhone 17 pro max",
+    item_name: "Macbook Pro M2",
     item_description:
       "Ergonomic wireless mouse with adjustable DPI and silent clicks.",
     item_price: 19.99,
