@@ -10,7 +10,7 @@ export const items = [
   },
   {
     id: 2,
-    item_name: "Chhing Koko",
+    item_name: "Keyboard Smart Device",
     item_description:
       "Compact mechanical keyboard with tactile switches and RGB backlight.",
     item_price: 59.5,
